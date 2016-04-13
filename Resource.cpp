@@ -17,7 +17,9 @@ namespace Gaming {
     }
 
     double Resource::consume() {
-
+        double ret = __capacity;
+        __capacity = 0;
+        return ret;
     }
 
     void Resource::age() {
@@ -25,7 +27,7 @@ namespace Gaming {
     }
 
     ActionType Resource::takeTurn(const Surroundings &s) const {
-
+        return ActionType::STAY;
     }
 
     // note: these won't be called while resources don't move
@@ -34,10 +36,10 @@ namespace Gaming {
     }
 
     Piece &Resource::interact(Agent *) {
-
+        return *this;
     }
 
     Piece &Resource::interact(Resource *) { // note: no interaction between resources
-
+        return *this;
     }
 }

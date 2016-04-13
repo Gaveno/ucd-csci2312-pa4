@@ -45,14 +45,7 @@ namespace Gaming {
     }
 
     Piece &Agent::interact(Resource *other) {
-        Advantage *adv = dynamic_cast<Advantage*>(other);
-        if (adv) {
-            __energy += adv->getCapacity();
-        }
-        else {
-            // Must be food
-            __energy += other->getCapacity();
-        }
+        __energy += other->consume();
         return *this;
     }
 
