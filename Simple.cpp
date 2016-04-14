@@ -28,8 +28,8 @@ namespace Gaming {
         std::stringstream ss;
         ss << Simple::SIMPLE_ID;
         ss << str;
-        for (int i = 0; i < (4 - str.length()); ++i)
-            ss << ' ';
+        /*for (int i = 0; i < (4 - str.length()); ++i)
+            ss << ' ';*/
         std::getline(ss, str);
         //os << ss.rdbuf(); //<< ']';
         for (int i = 0; i < str.length(); ++i) {

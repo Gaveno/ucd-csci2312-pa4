@@ -35,7 +35,7 @@ namespace Gaming {
 
         while (numStrategic > 0) {
             int i = d(gen);
-            if (__grid[i] == nullptr) {
+            if (i != (__width * __height) && __grid[i] == nullptr) {
                 Position pos(i / __width, i % __width);
                 __grid[i] = new Strategic(*this, pos, STARTING_AGENT_ENERGY);
                 numStrategic--;
@@ -44,7 +44,7 @@ namespace Gaming {
 
         while (numSimple > 0) {
             int i = d(gen);
-            if (__grid[i] == nullptr) {
+            if (i != (__width * __height) && __grid[i] == nullptr) {
                 Position pos(i / __width, i % __width);
                 __grid[i] = new Simple(*this, pos, STARTING_AGENT_ENERGY);
                 numSimple--;
@@ -53,7 +53,7 @@ namespace Gaming {
 
         while (numFoods > 0) {
             int i = d(gen);
-            if (__grid[i] == nullptr) {
+            if (i != (__width * __height) && __grid[i] == nullptr) {
                 Position pos(i / __width, i % __width);
                 __grid[i] = new Food(*this, pos, STARTING_RESOURCE_CAPACITY);
                 numFoods--;
@@ -62,7 +62,7 @@ namespace Gaming {
 
         while (numAdvantages > 0) {
             int i = d(gen);
-            if (__grid[i] == nullptr) {
+            if (i != (__width * __height) && __grid[i] == nullptr) {
                 Position pos(i / __width, i % __width);
                 __grid[i] = new Advantage(*this, pos, STARTING_RESOURCE_CAPACITY);
                 numAdvantages--;
@@ -78,12 +78,17 @@ namespace Gaming {
         }
         __status = NOT_STARTED;
         __verbose = false;
+        __round = 0;
     }
 
     Game::Game(unsigned width, unsigned height, bool manual) : __width(width), __height(height) { // note: manual population by default
         if (width < MIN_WIDTH || height < MIN_HEIGHT) {
             throw InsufficientDimensionsEx(MIN_WIDTH, MIN_HEIGHT, width, height);
         }
+
+        __status = NOT_STARTED;
+        __verbose = false;
+        __round = 0;
 
         for (unsigned i = 0; i < (__width * __height); ++i) {
             __grid.push_back(nullptr);
@@ -245,26 +250,27 @@ namespace Gaming {
     }
 
     const Surroundings Game::getSurroundings(const Position &pos) const {
-        std::cout << "Getting surroundings..." << std::endl;
+        //std::cout << "Getting surroundings..." << std::endl;
         Surroundings sur;
         for (int i = 0; i < 9; ++i) {
             sur.array[i] = EMPTY;
         }
-        for (int x = -1; x <= 1; ++x) {
-            for (int y = -1; y <= 1; ++y) {
-                if (x == 0 && y == 0) {
-                    sur.array[4] = SELF;
+        for (int row = -1; row <= 1; ++row) {
+            for (int col = -1; col <= 1; ++col) {
+                if (row == 0 && col == 0) {
+                    sur.array[col + 1 + ((row + 1) * __width)] = SELF;
                 }
-                if (pos.x + x >= 0 && pos.x + x < __height
-                        && pos.y + y >= 0 && pos.y + y < __width) {
+                if (pos.x + row >= 0 && pos.x + row < __height
+                        && pos.y + col >= 0 && pos.y + col < __width) {
                     // In bounds
-                    Piece *piece = __grid[pos.y + y + ((pos.x + x) * __width)];
-                    if (piece)
-                        sur.array[pos.y + y + ((pos.x + x) * __width)] = __grid[pos.y + y + ((pos.x + x) * __width)]->getType();
+                    unsigned int index = pos.y + col + ((pos.x + row) * __width);
+                    //Piece *piece = __grid[pos.y + y + ((pos.x + x) * __width)];
+                    if (__grid[index])
+                        sur.array[col + 1 + ((row + 1) * __width)] = __grid[index]->getType();
                 }
                 else {
                     // Out of bounds
-                    sur.array[pos.y + y + ((pos.x + x) * __width)] = INACCESSIBLE;
+                    sur.array[col + 1 + ((row + 1) * __width)] = INACCESSIBLE;
                 }
             }
         }
@@ -327,19 +333,29 @@ namespace Gaming {
     }
 
     std::ostream &operator<<(std::ostream &os, const Game &game) {
+        os << "Round " << game.__round << std::endl;
         int column = 0;
         for (auto it = game.__grid.begin(); it != game.__grid.end(); ++it) {
             if (*it == nullptr) {
-                os << "[     ]";
+                os << "[" << std::setw(6) << "]";
             } else {
-                os << "[";
-                os << **it;
-                os << "]";
+                //os ;
+                std::stringstream ss;
+                ss << "[" << **it;
+                std::string str;
+                std::getline(ss, str);
+                //os << str << std::setw(3) << "]";
+                os << str << "]";
+                //os << std::setw(4) << "[" << **it;
+                //os << "]";
+                //os ;
             }
             if (++column == game.__width) {
                 column = 0;
                 os << std::endl;
             }
         }
+        os << "Status: " << game.getStatus() << "..." << std::endl;
+        return os;
     }
 }

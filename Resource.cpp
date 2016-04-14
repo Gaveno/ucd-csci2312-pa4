@@ -8,7 +8,7 @@ namespace Gaming {
 
     const double Resource::RESOURCE_SPOIL_FACTOR = 1.2;
 
-    Resource::Resource(const Game &g, const Position &p, double capacity) : Piece(g, p) {
+    Resource::Resource(const Game &g, const Position &p, double capacity) : Piece(g, p), __capacity(capacity) {
 
     }
 
@@ -23,7 +23,7 @@ namespace Gaming {
     }
 
     void Resource::age() {
-
+        __capacity -= RESOURCE_SPOIL_FACTOR;
     }
 
     ActionType Resource::takeTurn(const Surroundings &s) const {
