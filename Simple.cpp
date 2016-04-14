@@ -38,14 +38,9 @@ namespace Gaming {
     }
 
     ActionType Simple::takeTurn(const Surroundings &s) const {
-        //Check for Advantage
+        //Check for Resource
         for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::ADVANTAGE)
-                return (ActionType)i;
-        }
-        //Check for Food
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::FOOD)
+            if (s.array[i] == PieceType::ADVANTAGE || s.array[i] == PieceType::FOOD)
                 return (ActionType)i;
         }
         //Check for Empty

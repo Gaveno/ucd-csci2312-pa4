@@ -12,7 +12,7 @@ namespace Gaming {
 
     Strategic::Strategic(const Game &g, const Position &p, double energy, Strategy *s)
     : Agent(g, p, energy) {
-
+        __strategy = s;
     }
 
     Strategic::~Strategic() {
@@ -38,27 +38,6 @@ namespace Gaming {
     }
 
     ActionType Strategic::takeTurn(const Surroundings &s) const {
-        //Check for Agent
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::SIMPLE || s.array[i] == PieceType::STRATEGIC)
-                return (ActionType)i;
-        }
-        //Check for Advantage
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::ADVANTAGE)
-                return (ActionType)i;
-        }
-        //Check for Food
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::FOOD)
-                return (ActionType)i;
-        }
-        //Check for Empty
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::EMPTY)
-                return (ActionType)i;
-        }
-
-        return ActionType::STAY;
+        return (*__strategy)(s);
     }
 }
