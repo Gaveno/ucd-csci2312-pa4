@@ -11,7 +11,9 @@ namespace Gaming {
     }
 
     std::ostream &operator<<(std::ostream &os, const GamingException &ex) {
-        os << ex.__name;
+        os << ex.__name << "\n";
+        ex.__print_args(os);
+        return os;
     }
 
     DimensionEx::DimensionEx(unsigned expWidth, unsigned expHeight, unsigned width, unsigned height) {
@@ -39,7 +41,8 @@ namespace Gaming {
     }
 
     void InsufficientDimensionsEx::__print_args(std::ostream &os) const {
-
+        os << "minWidth: " << getExpWidth() << " minHeight: " << getExpHeight();
+        os << "\nwidth: " << getWidth() << " height: " << getHeight() << "\n";
     }
 
     InsufficientDimensionsEx::InsufficientDimensionsEx(
@@ -49,7 +52,8 @@ namespace Gaming {
     }
 
     void OutOfBoundsEx::__print_args(std::ostream &os) const {
-
+        os << "minWidth: " << getExpWidth() << " minHeight: " << getExpHeight();
+        os << "\nwidth: " << getWidth() << " height: " << getHeight() << "\n";
     }
 
     OutOfBoundsEx::OutOfBoundsEx(unsigned maxWidth, unsigned maxHeight, unsigned width, unsigned height)
@@ -58,7 +62,7 @@ namespace Gaming {
     }
 
     void PositionEx::__print_args(std::ostream &os) const {
-
+        os << "x: " << __x << " y: " << __y << "\n";
     }
 
     PositionEx::PositionEx(unsigned x, unsigned y) {
@@ -79,7 +83,7 @@ namespace Gaming {
 
     }
 
-    PosVectorEmptyEx::PosVectorEmptyEx() {
+    PosVectorEmptyEx::PosVectorEmptyEx() : GamingException() {
         setName("PosVectorEmptyEx");
     }
 }

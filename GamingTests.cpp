@@ -1047,6 +1047,7 @@ void test_game_populate(ErrorContext &ec, unsigned int numRuns) {
         {
             Game g(9, 9, false);
 
+            std::cout << g.getNumResources() << " resources " << g.getNumAgents() << " agents" << std::endl;
             pass = (g.getNumAgents() == 20) &&
                    (g.getNumResources() == 40);
 

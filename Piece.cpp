@@ -20,9 +20,6 @@ namespace Gaming {
     }
 
     std::ostream &operator<<(std::ostream &os, const Piece &piece) {
-        //std::stringstream ss;
-        //piece.print(ss);
-        //os << ss.rdbuf();
         piece.print(os);
         return os;
     }
