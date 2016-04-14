@@ -38,15 +38,32 @@ namespace Gaming {
     }
 
     ActionType Simple::takeTurn(const Surroundings &s) const {
+        std::vector<int> positions;
         //Check for Resource
         for (int i = 0; i < 9; ++i) {
             if (s.array[i] == PieceType::ADVANTAGE || s.array[i] == PieceType::FOOD)
-                return (ActionType)i;
+                 positions.push_back(i);
+        }
+        if (positions.size() > 0) {
+            std::cout << "Position Resource Options: " << positions.size() << std::endl;
+            PositionRandomizer rand;
+            Position pos = rand(positions);
+            return (ActionType)(pos.y + (pos.x * 3));
         }
         //Check for Empty
-        for (int i = 0; i < 9; ++i) {
-            if (s.array[i] == PieceType::EMPTY)
-                return (ActionType)i;
+        //if (positions.size() == 0) {
+            for (int i = 0; i < 9; ++i) {
+                if (s.array[i] == PieceType::EMPTY)
+                    positions.push_back(i);
+            }
+        //}
+
+        if (positions.size() > 0) {
+            std::cout << "Position Empty Options: " << positions.size() << std::endl;
+            PositionRandomizer rand();
+            Position pos = rand(positions);
+            std::cout << "Position Chosen: " << pos.y + (pos.x * 3) << std::endl;
+            return (ActionType)(pos.y + (pos.x * 3));
         }
 
         return ActionType::STAY;

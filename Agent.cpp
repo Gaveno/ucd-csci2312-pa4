@@ -23,7 +23,25 @@ namespace Gaming {
     }
 
     Piece &Agent::operator*(Piece &other) {
-
+        Piece *p = &other;
+        Resource *res = dynamic_cast<Resource*>(p);
+        if (res) {
+            interact(res);
+        }
+        Agent *agent = dynamic_cast<Agent*>(p);
+        if (agent) {
+            interact(agent);
+        }
+        if (!isFinished()) {
+            //survivor
+            Position pNew;
+            pNew = other.getPosition();
+            Position pOld;
+            pOld = getPosition();
+            setPosition(pNew);
+            other.setPosition(pOld);
+        }
+        return *this;
     }
 
     Piece &Agent::interact(Agent *other) {

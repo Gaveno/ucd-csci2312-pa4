@@ -4,6 +4,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <set>
 #include "Game.h"
 #include "Simple.h"
 #include "Strategic.h"
@@ -258,7 +259,7 @@ namespace Gaming {
         for (int row = -1; row <= 1; ++row) {
             for (int col = -1; col <= 1; ++col) {
                 if (row == 0 && col == 0) {
-                    sur.array[col + 1 + ((row + 1) * __width)] = SELF;
+                    sur.array[col + 1 + ((row + 1) * 3)] = SELF;
                 }
                 if (pos.x + row >= 0 && pos.x + row < __height
                         && pos.y + col >= 0 && pos.y + col < __width) {
@@ -266,11 +267,11 @@ namespace Gaming {
                     unsigned int index = pos.y + col + ((pos.x + row) * __width);
                     //Piece *piece = __grid[pos.y + y + ((pos.x + x) * __width)];
                     if (__grid[index])
-                        sur.array[col + 1 + ((row + 1) * __width)] = __grid[index]->getType();
+                        sur.array[col + 1 + ((row + 1) * 3)] = __grid[index]->getType();
                 }
                 else {
                     // Out of bounds
-                    sur.array[col + 1 + ((row + 1) * __width)] = INACCESSIBLE;
+                    sur.array[col + 1 + ((row + 1) * 3)] = INACCESSIBLE;
                 }
             }
         }
@@ -296,10 +297,12 @@ namespace Gaming {
             case SW: y--; x++; break;
             case S: x++; break;
             case SE: x++; y++; break;
+            default: break;
         }
         Position p((unsigned )x, (unsigned)y);
-        if (p.x < __height && p.y < __width && !getPiece(p.x, p.y))
+        if (p.x < __height && p.y < __width)
             return true;
+        return false;
     }
 
     const Position Game::move(const Position &pos, const ActionType &ac) const { // note: assumes legal, use with isLegal()
@@ -316,20 +319,76 @@ namespace Gaming {
                 case SW: y--; x++; break;
                 case S: x++; break;
                 case SE: x++; y++; break;
+                default: break;
             }
             Position p((unsigned )x, (unsigned)y);
             return p;
             //__grid[(unsigned)y + ((unsigned)x * __height)] = __grid[pos.y + (pos.x * __width)];
             //__grid[pos.y + (pos.x * __width)] = nullptr;
         }
+        return pos;
     }
 
     void Game::round() {   // play a single round
+        //__status = PLAYING;
+        //std::cout << "Round started" << std::endl;
+        std::set<Piece*> pieces;
+        for (auto it = __grid.begin(); it != __grid.end(); ++it) {
+            if (*it) {
+                pieces.insert(*it);
+                (*it)->setTurned(false);
+            }
+        }
 
+        // Take turns
+        for (auto it = pieces.begin(); it != pieces.end(); ++it) {
+            if (!(*it)->getTurned()) {
+                (*it)->setTurned(true);
+                ActionType ac = (*it)->takeTurn(getSurroundings((*it)->getPosition()));
+                Position pos0 = (*it)->getPosition();
+                Position pos1 = move(pos0, ac);
+                if (pos0.x != pos1.x || pos0.y != pos1.y) {
+                    Piece *p = __grid[pos1.y + (pos1.x * __width)];
+                    if (p) {
+                        (*(*it)) * (*p);
+                    } else {
+                        // empty move
+                        (*it)->setPosition(pos1);
+                        //std::cout << "position updated of piece" << std::endl;
+                    }
+                }
+            }
+        }
+
+        // Update positions and delete
+        for (auto it = pieces.begin(); it != pieces.end(); ++it) {
+            Position pos = (*it)->getPosition();
+            if (__grid[pos.y + (pos.x * __width)] != (*it)) {
+                __grid[pos.y + (pos.x * __width)] = (*it);
+                //std::cout << "place in __grid changed of a piece" << std::endl;
+            }
+            if (!(*it)->isViable()) {
+                delete (*it);
+                __grid[pos.y + (pos.x * __width)] = nullptr;
+            }
+        }
+
+        // Check game over
+        if (getNumResources() <= 0) {
+            __status = OVER;
+        }
+        __round++;
     }
 
     void Game::play(bool verbose) {    // play game until over
-
+        __verbose = verbose;
+        __status = PLAYING;
+        std::cout << *this;
+        while (__status != OVER) {
+            round();
+            if (verbose) std::cout << *this;
+        }
+        if (!verbose) std::cout << *this;
     }
 
     std::ostream &operator<<(std::ostream &os, const Game &game) {
