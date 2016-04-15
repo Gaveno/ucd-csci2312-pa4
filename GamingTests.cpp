@@ -1479,7 +1479,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addSimple(1, 1);
             g.addFood(2, 2);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumAgents() == 1);
@@ -1495,7 +1495,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumAgents() == 1);
@@ -1512,7 +1512,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumAgents() == 1);
@@ -1530,7 +1530,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumAgents() == 2);
@@ -1549,7 +1549,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumAgents() == 3);
@@ -1567,7 +1567,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumStrategic() == 1) &&
@@ -1585,7 +1585,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumStrategic() == 1);
@@ -1606,7 +1606,7 @@ void test_game_play(ErrorContext &ec, unsigned int numRuns) {
             g.addFood(2, 2);
             g.addAdvantage(1, 0);
 
-            g.play(true); // verbose = false, by default
+            g.play(false); // verbose = false, by default
 
             pass = (g.getNumResources() == 0) &&
                    (g.getNumStrategic() == 1 ) &&
