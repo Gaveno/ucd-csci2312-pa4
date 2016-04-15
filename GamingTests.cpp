@@ -1409,9 +1409,11 @@ void test_game_randomization(ErrorContext &ec, unsigned int numRuns) {
             for (auto &a : actionCounts) a = 0;
             Position oldPos = pos;
             for (int i = 0; i < 1000; i ++) {
-                std::cout << "Round test: " << i << " Position: " << piece->getPosition().x << "x" << piece->getPosition().y << std::endl;
                 g.round();
                 pos = piece->getPosition();
+                std::cout << "Round test: " << i << std::endl;
+                std::cout << "Position: " << pos.x << "x" << pos.y << std::endl;
+                std::cout << "Old Position: " << oldPos.x << "x" << oldPos.y << std::endl;
                 assert(pos.x != oldPos.x || pos.y != oldPos.y);
                 assert(piece->isViable());
                 ActionType actionType = g.reachSurroundings(oldPos, pos);

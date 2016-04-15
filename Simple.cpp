@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <random>
+#include <chrono>
 #include "Simple.h"
 
 namespace Gaming {
@@ -39,31 +41,33 @@ namespace Gaming {
 
     ActionType Simple::takeTurn(const Surroundings &s) const {
         std::vector<int> positions;
-        //Check for Resource
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine rnd(seed);
+
         for (int i = 0; i < 9; ++i) {
             if (s.array[i] == PieceType::ADVANTAGE || s.array[i] == PieceType::FOOD)
                  positions.push_back(i);
         }
         if (positions.size() > 0) {
-            std::cout << "Position Resource Options: " << positions.size() << std::endl;
-            PositionRandomizer rand;
-            Position pos = rand(positions);
-            return (ActionType)(pos.y + (pos.x * 3));
+            if (positions.size() == 1) return (ActionType)positions[0];
+            int posIndex = positions[rnd() % positions.size()];
+            return (ActionType)(posIndex);
         }
         //Check for Empty
         //if (positions.size() == 0) {
             for (int i = 0; i < 9; ++i) {
-                if (s.array[i] == PieceType::EMPTY)
+                if (s.array[i] == PieceType::EMPTY) {
                     positions.push_back(i);
+                    std::cout << "Available position: " << i << std::endl;
+                }
             }
         //}
 
         if (positions.size() > 0) {
-            std::cout << "Position Empty Options: " << positions.size() << std::endl;
-            PositionRandomizer rand();
-            Position pos = rand(positions);
-            std::cout << "Position Chosen: " << pos.y + (pos.x * 3) << std::endl;
-            return (ActionType)(pos.y + (pos.x * 3));
+            if (positions.size() == 1) return (ActionType)positions[0];
+            int posIndex = positions[rnd() % positions.size()];
+            std::cout << "Chosen Action: " << posIndex << std::endl;
+            return (ActionType)(posIndex);
         }
 
         return ActionType::STAY;
