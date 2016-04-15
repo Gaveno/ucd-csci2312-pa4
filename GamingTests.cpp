@@ -1047,7 +1047,6 @@ void test_game_populate(ErrorContext &ec, unsigned int numRuns) {
         {
             Game g(9, 9, false);
 
-            std::cout << g.getNumResources() << " resources " << g.getNumAgents() << " agents" << std::endl;
             pass = (g.getNumAgents() == 20) &&
                    (g.getNumResources() == 40);
 
@@ -1411,22 +1410,12 @@ void test_game_randomization(ErrorContext &ec, unsigned int numRuns) {
             for (int i = 0; i < 1000; i ++) {
                 g.round();
                 pos = piece->getPosition();
-                //std::cout << "Round test: " << i << std::endl;
-                //std::cout << "Position: " << pos.x << "x" << pos.y << std::endl;
-                //std::cout << "Old Position: " << oldPos.x << "x" << oldPos.y << std::endl;
                 assert(pos.x != oldPos.x || pos.y != oldPos.y);
                 assert(piece->isViable());
                 ActionType actionType = g.reachSurroundings(oldPos, pos);
                 ++ actionCounts[actionType];
                 oldPos = pos;
             }
-
-            /*std::cout << "Action Count NE: " << actionCounts[ActionType::NE] << std::endl;
-            std::cout << "Action Count NW: " << actionCounts[ActionType::NW] << std::endl;
-            std::cout << "Action Count N: " << actionCounts[ActionType::N] << std::endl;
-            std::cout << "Action Count W: " << actionCounts[ActionType::W] << std::endl;
-            std::cout << "Action Count NE: " << actionCounts[ActionType::NE] << std::endl;
-            std::cout << "Action Count NW: " << actionCounts[ActionType::NW] << std::endl;*/
 
             pass = actionCounts[ActionType::NE] > 100 &&
                     actionCounts[ActionType::NW] > 100 &&

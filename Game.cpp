@@ -351,7 +351,8 @@ namespace Gaming {
         std::set<Piece*> pieces;
         for (auto it = __grid.begin(); it != __grid.end(); ++it) {
             if (*it) {
-                pieces.insert(*it);
+                pieces.insert(pieces.end(), *it);
+                //pieces.insert(*it);
                 (*it)->setTurned(false);
             }
         }
@@ -360,6 +361,7 @@ namespace Gaming {
         for (auto it = pieces.begin(); it != pieces.end(); ++it) {
             if (!(*it)->getTurned()) {
                 (*it)->setTurned(true);
+                (*it)->age();
                 ActionType ac = (*it)->takeTurn(getSurroundings((*it)->getPosition()));
                 //std::cout << "------- Game::round -------" << std::endl;
                 //std::cout << "Action: " << ac << std::endl;
@@ -395,6 +397,7 @@ namespace Gaming {
                 delete __grid[i];
                 __grid[i] = nullptr;
             }
+            //if (__grid[i]) __grid[i]->age();
         }
 
         // Update positions of remaining
