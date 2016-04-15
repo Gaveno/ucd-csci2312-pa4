@@ -258,9 +258,6 @@ namespace Gaming {
         }
         for (int row = -1; row <= 1; ++row) {
             for (int col = -1; col <= 1; ++col) {
-                if (row == 0 && col == 0) {
-                    sur.array[col + 1 + ((row + 1) * 3)] = SELF;
-                }
                 if (pos.x + row >= 0 && pos.x + row < __height
                         && pos.y + col >= 0 && pos.y + col < __width) {
                     // In bounds
@@ -275,13 +272,32 @@ namespace Gaming {
                 }
             }
         }
+        sur.array[4] = SELF;
 
         return sur;
     }
 
     // gameplay methods
     const ActionType Game::reachSurroundings(const Position &from, const Position &to) { // note: STAY by default
-        return ActionType::STAY;
+        int x;
+        int y;
+        x = to.x - from.x;
+        y = to.y - from.y;
+        x++;
+        y++;
+        unsigned int index = (y + (x * 3));
+        switch (index) {
+            case 0: return NW;
+            case 1: return N;
+            case 2: return NE;
+            case 3: return W;
+            case 4: return STAY;
+            case 5: return E;
+            case 6: return SW;
+            case 7: return S;
+            case 8: return SE;
+            default: return STAY;
+        }
     }
 
     bool Game::isLegal(const ActionType &ac, const Position &pos) const {
@@ -345,15 +361,26 @@ namespace Gaming {
             if (!(*it)->getTurned()) {
                 (*it)->setTurned(true);
                 ActionType ac = (*it)->takeTurn(getSurroundings((*it)->getPosition()));
+                //std::cout << "------- Game::round -------" << std::endl;
+                //std::cout << "Action: " << ac << std::endl;
                 Position pos0 = (*it)->getPosition();
+                //std::cout << "Pos0: " << pos0.x << "x" << pos0.y << std::endl;
                 Position pos1 = move(pos0, ac);
+                //std::cout << "Pos1: " << pos1.x << "x" << pos1.y << std::endl;
                 if (pos0.x != pos1.x || pos0.y != pos1.y) {
                     Piece *p = __grid[pos1.y + (pos1.x * __width)];
                     if (p) {
                         (*(*it)) * (*p);
+                        if ((*it)->getPosition().x != pos0.x || (*it)->getPosition().y != pos0.y) {
+                            // piece moved
+                            __grid[pos1.y + (pos1.x * __width)] = (*it);
+                            __grid[pos0.y + (pos0.x * __width)] = p;
+                        }
                     } else {
                         // empty move
                         (*it)->setPosition(pos1);
+                        __grid[pos1.y + (pos1.x * __width)] = (*it);
+                        __grid[pos0.y + (pos0.x * __width)] = nullptr;
                         //std::cout << "position updated of piece" << std::endl;
                     }
                 }
@@ -361,21 +388,33 @@ namespace Gaming {
         }
 
         // Update positions and delete
-        for (auto it = pieces.begin(); it != pieces.end(); ++it) {
-            Position pos = (*it)->getPosition();
-            if (__grid[pos.y + (pos.x * __width)] != (*it)) {
-                __grid[pos.y + (pos.x * __width)] = (*it);
-                //std::cout << "place in __grid changed of a piece" << std::endl;
-            }
-            if (!(*it)->isViable()) {
-                delete (*it);
-                __grid[pos.y + (pos.x * __width)] = nullptr;
+        // Delete invalid first
+        for (unsigned int i = 0; i < __grid.size(); ++i) {
+            //if (__grid[i]) std::cout << "Piece viable: " << __grid[i]->isViable() << std::endl;
+            if (__grid[i] && !(__grid[i]->isViable())) {
+                delete __grid[i];
+                __grid[i] = nullptr;
             }
         }
 
+        // Update positions of remaining
+        /*for (unsigned int i = 0; i < __grid.size(); ++i) {
+            Piece *currentPiece = __grid[i];
+            if (currentPiece) {
+                Position pos = currentPiece->getPosition();
+                if (__grid[pos.y + (pos.x * __width)] != currentPiece) {
+                    __grid[pos.y + (pos.x * __width)] = currentPiece;
+                    __grid[i] = nullptr;
+                    //std::cout << "place in __grid changed of a piece" << std::endl;
+                }
+            }
+
+            i++;
+        }*/
+
         // Check game over
         if (getNumResources() <= 0) {
-            __status = OVER;
+            __status = Status::OVER;
         }
         __round++;
     }
@@ -414,7 +453,15 @@ namespace Gaming {
                 os << std::endl;
             }
         }
-        os << "Status: " << game.getStatus() << "..." << std::endl;
+        os << "Status: ";
+        switch (game.getStatus()) {
+            case Game::Status::NOT_STARTED:
+                std::cout << "Not Started..." << std::endl; break;
+            case Game::Status::PLAYING:
+                std::cout << "Playing..." << std::endl; break;
+            default:
+                std::cout << "Over!" << std::endl; break;
+        }
         return os;
     }
 }

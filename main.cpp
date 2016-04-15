@@ -16,12 +16,14 @@ using namespace Testing;
 
 int main() {
 
-    Gaming::Game g(3,3, 0);
-    /*g.addSimple(0, 0);
+    Gaming::Game g(3,3, 1);
+    g.addSimple(0, 0);
+    g.addSimple(1, 0);
     g.addFood(1, 2);
-    g.addStrategic(2, 0);
-    g.addAdvantage(2, 2);*/
-    cout << g;
+    //g.addStrategic(2, 0);
+    g.addAdvantage(2, 2);
+    //cout << g;
+    g.play(true);
 
     const int NumIters = 3;
 

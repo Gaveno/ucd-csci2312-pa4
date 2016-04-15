@@ -43,7 +43,9 @@ namespace Gaming {
 
     double Advantage::consume() {
         double ret = getCapacity();
-        __capacity = 0;
+        __capacity = -1;
+        finish();
+        //std::cout << "Consuming: D" << __id << std::endl;
         return ret;
     }
 

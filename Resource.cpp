@@ -18,7 +18,8 @@ namespace Gaming {
 
     double Resource::consume() {
         double ret = __capacity;
-        __capacity = 0;
+        __capacity = -1;
+        finish();
         return ret;
     }
 

@@ -16,7 +16,7 @@ namespace Gaming {
     }
 
     Strategic::~Strategic() {
-
+        delete __strategy;
     }
 
     void Strategic::print(std::ostream &os) const {
